@@ -15,11 +15,123 @@ import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.PluginResult;
 import android.content.res.Configuration;
 
+import com.wave.dev.Wave2;
+import com.wave.dev.Wave2Callback;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PictureInPicture extends CordovaPlugin {
+
+    private static final String TAG = "HostApp";
+    private Wave2 wave2;
+    private JSONObject encryptedAuthData;
+
+    Wave2Callback wave2Callback = new Wave2Callback() {
+        @Override
+        public void onInitialiseSuccess(String version) {
+            Log.d(TAG, "onInitialiseSuccess " + version);
+        }
+
+        @Override
+        public void onInitialiseFailed(JSONObject error) {
+            Log.d(TAG, "onInitialiseFailed Error: " + error.toString());
+        }
+
+        @Override
+        public void onLaunchSuccess() {
+            Log.d(TAG, "onLaunchSuccess");
+        }
+
+        @Override
+        public void onLaunchFailed(JSONObject error) {
+            Log.d(TAG, "onLaunchFailed Error: " + error.toString());
+        }
+
+        @Override
+        public void onLoginSuccess(JSONObject userData) {
+            Log.d(TAG, "onLoginSuccess userData: " + userData.toString());
+        }
+
+        @Override
+        public void onLoginFailed(JSONObject error) {
+            Log.d(TAG, "onLoginFailed Error: " + error.toString());
+        }
+
+        @Override
+        public void onKycRequired(JSONObject userData) {
+            Log.d(TAG, "onUserKycIsComplete userData: " + userData.toString());
+        }
+
+        @Override
+        public void onOrderPlaced(JSONObject orderDetails) {
+            Log.d(TAG, "onOrderPlaced orderDetails: " + orderDetails.toString());
+        }
+
+        @Override
+        public void onOrderFailed(JSONObject orderDetails) {
+            Log.d(TAG, "onOrderFailed orderDetails: " + orderDetails.toString());
+        }
+
+        @Override
+        public void onAnalyticsEvent(JSONObject event) {
+            Log.d(TAG, "onAnalyticsEvent event: " + event.toString());
+        }
+
+        @Override
+        public void onSDKClosed() {
+            Log.d(TAG, "onSDKClosed");
+        }
+
+        @Override
+        public void onSDKExited() {
+            Log.d(TAG, "onSDKExited");
+        }
+
+        @Override
+        public void onAdditionalData(JSONObject data) {
+            Log.d(TAG, "onAdditionalData data: " + data.toString());
+        }
+
+        @Override
+        public void openAccountStatements(JSONObject userData) {
+            Log.d(TAG, "onOrderFailed orderDetails: " + userData.toString());
+        }
+
+        @Override
+        public void onError(JSONObject error) {
+            Log.d(TAG, "onError Error: " + error.toString());
+        }
+
+        @Override
+        public void onSessionPingReceived() {
+            Log.d(TAG, "onSessionPingReceived");
+        }
+
+        @Override
+        public void onExitTimeout(JSONObject error) {
+            Log.d(TAG, "onExitTimeout Error: " + error.toString());
+        }
+
+        @Override
+        public void onInactiveTimeout(JSONObject error) {
+            Log.d(TAG, "onExitTimeout Error: " + error.toString());
+        }
+    };
+
+    encryptedAuthData = new JSONObject();
+        try {
+        encryptedAuthData.put("token", "a9b84026-4c07-4d8b-892c-f74ab2b135d0");
+        encryptedAuthData.put("guest_user", false);
+    } catch (Exception e) {
+        //
+    }
+
+    wave2 = Wave2.getInstance(this);
+
+    wave2.initialiseWave2(Wave2.environment.UAT, WAVE2_PARTNER_ID, encryptedAuthData, false, Wave2.session.INTERVAL_NONE, 20 * 1000, 10 * 1000, wave2Callback);
+
     private final PictureInPictureParams.Builder pictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
     private CallbackContext callback = null;
 
@@ -47,7 +159,10 @@ public class PictureInPicture extends CordovaPlugin {
         } else if(action.equals("isPipModeSupported")){
             this.isPipModeSupported(callbackContext);
             return true;
-        } 
+        } else if(action.equals("opneAARFile")) {
+            this.opneAARFile(callbackContext);
+            return true;
+        }
         return false;
     }
 
@@ -96,6 +211,16 @@ public class PictureInPicture extends CordovaPlugin {
             String stackTrace = Log.getStackTraceString(e);
             callbackContext.error(stackTrace);
         }             
+    }
+
+    public void opneAARFile(CallbackContext callbackContext) {
+        try {
+            wave2.startWave2(null);
+            callbackContext.success("OPEN AAR FILE");
+        } catch(Exception e){
+            String stackTrace = Log.getStackTraceString(e);
+            this.callbackFunction(false, stackTrace);
+        }
     }
 
     public void isPip(CallbackContext callbackContext) {
