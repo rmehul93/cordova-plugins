@@ -18,5 +18,7 @@
         </config-file>
         <config-file parent="/*" target="AndroidManifest.xml"></config-file>
         <source-file src="src/android/PictureInPicture.java" target-dir="src/cordova/plugin/pip" />
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+        <resource-file src="libs/wave2.aar" target="libs/wave2.aar" />
     </platform>
 </plugin>
