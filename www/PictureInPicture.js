@@ -20,4 +20,8 @@ plugin.prototype.isPipModeSupported = function(success, error) {
     exec(success, error, "PictureInPicture", "isPipModeSupported", []);
 }
 
+plugin.prototype.opneAARFile = function(success, error) {
+    exec(success, error, "PictureInPicture", "opneAARFile", []);
+}
+
 module.exports = new plugin();
